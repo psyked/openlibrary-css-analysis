@@ -4,10 +4,14 @@
   "version": "1.0.0",
   "author": "Kyle Mathews <mathews.kyle@gmail.com>",
   "dependencies": {
+    "css-color-extractor": "^0.0.5",
     "gatsby": "^1.9.247",
     "gatsby-link": "^1.6.40",
     "gatsby-plugin-react-helmet": "^2.0.10",
-    "react-helmet": "^5.2.0"
+    "parse-color": "^1.0.0",
+    "react-helmet": "^5.2.0",
+    "semantic-ui-css": "^2.3.1",
+    "semantic-ui-react": "^0.81.1"
   },
   "keywords": [
     "gatsby"
