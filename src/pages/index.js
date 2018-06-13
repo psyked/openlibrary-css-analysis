@@ -71,11 +71,26 @@ const IndexPage = () => (
                   })
                 }</td> */}
               </tr>
+              <tr>
+                <td>Web Safe Colors:</td>
+                <td>coming soon</td>
+              </tr>
             </tbody>
           </table>
         </Card.Description>
       </Card.Content>
     </Card>
+    <h2>Colour Palette</h2>
+    <p>A preview of all of the colours, arranged by order of appearance in the stylesheet.</p>
+    <div className={styles.palettecontainer}>
+      {
+        expanded.map((colour) => {
+          return (
+            <div className={`ui ${styles.palette}`} style={{ backgroundColor: colour.hex }}></div>
+          )
+        })
+      }
+    </div>
     <h2>Extracted Colours</h2>
     <p>Using <a href="https://github.com/rsanchez/css-color-extractor">css-color-extractor</a> to extract color declarations from CSS source and <a href="https://github.com/substack/parse-color">parse-color</a> to translate declarations into alternative formats.</p>
     <Card.Group className={styles.palettecontainer} itemsPerRow={3}>
