@@ -41,6 +41,7 @@ const deduplicated = removeDuplicates(expanded, 'hex');
 
 const IndexPage = () => (
   <div>
+    <p>Inspired by <a href="https://github.com/internetarchive/openlibrary/issues/968">this issue,</a> this is an attempt to help normalise the CSS colour declarations of the Open Library website.</p>
     <h1>Summary</h1>
     <p>The <a href="#source-data">master CSS file</a> from OpenLibrary has been embedded into this page and processed.</p>
     <Card fluid>
@@ -92,11 +93,13 @@ const IndexPage = () => (
                   <table className="ui celled table">
                     <thead>
                       <tr>
-                        <th colSpan="2">Existing usage</th>
+                        <th>Existing color declarations</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr><td><strong>raw</strong></td><td>{String(colour.raw)}</td></tr>
+                      <tr>
+                        <td><code>{String(colour.raw)}</code></td>
+                      </tr>
                     </tbody>
                   </table>
                   <table className="ui celled table">
