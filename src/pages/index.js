@@ -272,7 +272,7 @@ const IndexPage = () => (
                       <tr><td><strong>hsva</strong></td><td>{String(colour.hsva)}</td></tr>
                       <tr><td><strong>cmyk</strong></td><td>{String(colour.cmyk)}</td></tr>
                       <tr><td><strong>cmyka</strong></td><td>{String(colour.cmyka)}</td></tr>
-                      <tr><td><strong>lab</strong></td><td>{String(colour.lab)}</td></tr>
+                      {/* <tr><td><strong>lab</strong></td><td>{String(colour.lab)}</td></tr> */}
                       <tr className={!colour.keyword ? 'disabled' : ''}><td><strong>keyword</strong></td><td className={!colour.keyword ? styles.disabled : ''}>{!!colour.keyword ? String(colour.keyword) : 'no match'}</td></tr>
                     </tbody>
                   </table>
