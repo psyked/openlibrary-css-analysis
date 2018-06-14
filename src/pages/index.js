@@ -4,6 +4,8 @@ import { Card, Segment } from 'semantic-ui-react'
 import extractor from 'css-color-extractor'
 import parse from 'parse-color'
 import DeltaE from 'delta-e'
+import rgb2lab from '../libs/rgb2lab'
+import removeDuplicates from '../libs/removeDuplicatesFromArrayByKey'
 
 // CSS
 import "semantic-ui-css/semantic.css";
@@ -12,55 +14,21 @@ import styles from './styles.module.css'
 // Raw data
 import exampleData from 'raw!../master.source'
 
-
-var options = {
-  // withoutGrey: false, // set to true to remove rules that only have grey colors
-  // withoutMonochrome: false, // set to true to remove rules that only have grey, black, or white colors
-  colorFormat: null // transform colors to one of the following formats: hexString, rgbString, percentString, hslString, hwbString, or keyword
-};
-
-// extract from a full stylesheet
+// extract color declarations from a full stylesheet
 const extractedColours = extractor.fromCss(exampleData);
 
-// expand the input colours into their other syntax equivalents
+// expand the input colours into their other-format equivalents
 const expanded = extractedColours
+  // replace with the full details
   .map(declaration => {
     return {
-      ...parse(declaration),
-      lab: rgb2lab(parse(declaration).rgb),
-      raw: declaration
+      ...parse(declaration), // use all of the values from 'parse-color'
+      lab: rgb2lab(parse(declaration).rgb), // lab values are needed for Delta-E analysis
+      raw: [declaration] // so we know how it's been referenced in the source code
     }
-  }) // replace with the full details
-  .filter(({ hex }) => !!hex) // remove any that haven't parsed correctly
-
-function removeDuplicates(myArr, prop) {
-  return myArr.filter((obj, pos, arr) => {
-    return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos;
-  });
-}
-
-function rgb2lab(rgb) {
-  if (!rgb) return;
-  var r = rgb[0] / 255,
-    g = rgb[1] / 255,
-    b = rgb[2] / 255,
-    x, y, z
-
-  r = (r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92
-  g = (g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92
-  b = (b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92
-
-  x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047
-  y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.00000
-  z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883
-
-  x = (x > 0.008856) ? Math.pow(x, 1 / 3) : (7.787 * x) + 16 / 116
-  y = (y > 0.008856) ? Math.pow(y, 1 / 3) : (7.787 * y) + 16 / 116
-  z = (z > 0.008856) ? Math.pow(z, 1 / 3) : (7.787 * z) + 16 / 116
-
-  return [(116 * y) - 16, 500 * (x - y), 200 * (y - z)]
-}
-
+  })
+  // remove any invalid values that couldn't be parsed into hex values
+  .filter(({ hex }) => !!hex)
 
 const deduplicated = removeDuplicates(expanded, 'hex');
 
@@ -70,7 +38,6 @@ const groupedPalette = deduplicated.map((color) => {
     distance: deduplicated.filter(curr => color !== curr).map((curr) => {
       const color1 = { L: color.lab[0], A: color.lab[1], B: color.lab[2] }
       const color2 = { L: curr.lab[0], A: curr.lab[1], B: curr.lab[2] }
-      // console.log(color1, color2)
       return {
         hex: curr.hex,
         distance: DeltaE.getDeltaE00(color1, color2)
@@ -80,8 +47,6 @@ const groupedPalette = deduplicated.map((color) => {
     })
   }
 })
-
-// console.log(groupedPalette)
 
 const groups = groupedPalette.map(({ hex, distance }) => {
   return [
@@ -97,8 +62,6 @@ const groups = groupedPalette.map(({ hex, distance }) => {
     })
 }).filter(ar => ar.length > 1)
 
-// console.log(groups)
-
 const deduplicatedgroups = removeDuplicates(groups.map((group) => {
   return {
     id: group.map(({ hex }) => hex).join('-'),
@@ -112,40 +75,6 @@ const deduplicatedgroups = removeDuplicates(groups.map((group) => {
   }
   return b.length - a.length
 })
-
-// console.log(deduplicatedgroups)
-
-
-// const ranges = [
-//   [0, 0, 'greyscale'],
-//   [346, 45, 'red'],
-//   [46, 105],
-//   [106, 165],
-//   [166, 225],
-//   [226, 285],
-//   [286, 345]
-// ]
-
-// const sortedPalette = deduplicated.filter(({ hsl }) => hsl[0] > 0 && hsl[0] <= 60).sort((a, b) => {
-//   return a.hsl[2] - b.hsl[2];
-//   // return (a.hsl[1] + a.hsl[2]) - (b.hsl[1] + b.hsl[2]);
-// })
-
-// const groupedPalette = ranges.map(range => {
-//   return deduplicated.filter(({ hsl: [hue, sat, lightness] }) => {
-//     const [min, max] = range
-//     if (min === 0 && max === 0 && sat === 0) {
-//       return true;
-//     }
-//     if (min > max) {
-//       return hue >= min || hue <= max;
-//     } else {
-//       return hue >= min && hue <= max;
-//     }
-//   }).sort((a, b) => {
-//     return a.hsl[2] - b.hsl[2];
-//   })
-// })
 
 const IndexPage = () => (
   <div>
@@ -183,15 +112,6 @@ const IndexPage = () => (
     </Card>
     <h2>Colour Palette</h2>
     <p>A preview of all of the colours, arranged by order of appearance in the stylesheet.</p>
-    {/* <div className={styles.palettecontainer}>
-      {
-        sortedPalette.map((colour) => {
-          return (
-            <div key={colour.hex} className={`ui ${styles.palette}`} style={{ backgroundColor: colour.hex }}></div>
-          )
-        })
-      }
-    </div> */}
     <div className={styles.palettecontainer}>
       {
         groupedPalette.map((colour) => {
@@ -204,19 +124,11 @@ const IndexPage = () => (
     <h2>Similar colours</h2>
     <p>The following colour groups have been tested with the <a href="http://zschuessler.github.io/DeltaE/">Delta-E 2000 algorithm</a> and are determined to be <a href="http://zschuessler.github.io/DeltaE/learn">perceptually indistinct,</a> making them good candidates for reducing to a single colour.</p>
     <div>
-      {/* <div className={styles.palettecontainer}>
-        {deduplicatedgroups.map((colour) => {
-          return (
-            <div key={colour.hex} className={`ui ${styles.palette}`} style={{ backgroundColor: colour.hex }}></div>
-          )
-        })}
-      </div> */}
       {
         deduplicatedgroups.map(({ id, value: group }) => {
           return (
             <Segment vertical>
               <div className={styles.palettecontainer}>
-                {/* {id} */}
                 {group.map((colour) => {
                   return (
                     <div key={colour.hex} className={`ui ${styles.palette} ${colour.hsl[2] > 50 ? styles.palette_dark : styles.palette_light}`} style={{ backgroundColor: colour.hex }}>
@@ -272,7 +184,6 @@ const IndexPage = () => (
                       <tr><td><strong>hsva</strong></td><td>{String(colour.hsva)}</td></tr>
                       <tr><td><strong>cmyk</strong></td><td>{String(colour.cmyk)}</td></tr>
                       <tr><td><strong>cmyka</strong></td><td>{String(colour.cmyka)}</td></tr>
-                      {/* <tr><td><strong>lab</strong></td><td>{String(colour.lab)}</td></tr> */}
                       <tr className={!colour.keyword ? 'disabled' : ''}><td><strong>keyword</strong></td><td className={!colour.keyword ? styles.disabled : ''}>{!!colour.keyword ? String(colour.keyword) : 'no match'}</td></tr>
                     </tbody>
                   </table>
