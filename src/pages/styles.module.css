@@ -4,6 +4,7 @@
     display: block;
     padding: 0 1em;
     line-height: 50px;
+    position: relative;
 }
 
 .palette_light {

@@ -18,13 +18,13 @@ import exampleData from 'raw!../master.source'
 // extract color declarations from a full stylesheet
 const extractedColours = extractor.fromCss(exampleData);
 
-console.log(extractedColours)
+// console.log(extractedColours)
 
 // expand the input colours into their other-format equivalents
 const expanded = extractedColours
   // replace with the full details
   .map(declaration => {
-    const r = new RegExp(declaration.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&') + '[\s|;|!]', 'g')
+    const r = new RegExp(declaration.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&') + '[\s|;|!|\)]', 'g')
     const matches = exampleData.match(r);
     // console.log('regex?', r)
     // console.log('exampleData', exampleData.match(r).length)
@@ -39,7 +39,7 @@ const expanded = extractedColours
   .filter(({ hex }) => !!hex)
 
 const expandedRefs = expanded.map(colorInfo => {
-  console.log(expanded.filter(({ hex }) => hex === colorInfo.hex))
+  // console.log(expanded.filter(({ hex }) => hex === colorInfo.hex))
   return {
     ...colorInfo,
     useCount: expanded.filter(({ hex }) => hex === colorInfo.hex).map(({ useCount }) => useCount).reduce((prev, curr) => prev + curr),
