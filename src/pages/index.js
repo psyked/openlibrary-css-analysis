@@ -140,7 +140,7 @@ const IndexPage = () => (
       </Card.Content>
     </Card>
     <h2>Colour Palette</h2>
-    <p>A preview of all of the colours, arranged by order of appearance in the stylesheet.</p>
+    <p>A preview of all of the colours, arranged by a number of declarations in the stylesheet.</p>
     <div className={styles.palettecontainer}>
       {
         groupedPalette.map((colour) => {
@@ -176,6 +176,7 @@ const IndexPage = () => (
     <Card.Group className={styles.palettecontainer} itemsPerRow={3}>
       {
         deduplicated.map((colour) => {
+          const withDistanceInfo = groupedPalette.find(({ hex }) => hex === colour.hex)
           return (
             <Card key={colour.hex}>
               <Card.Content>
@@ -203,7 +204,7 @@ const IndexPage = () => (
                               <td>
                                 {
                                   expanded.filter(({ raw }) => raw === value).map(({ useCount }) => {
-                                    return <span>Declared {useCount} time{useCount > 1 ? 's' : ''}</span>
+                                    return <span>Used {useCount} time{useCount > 1 ? 's' : ''}</span>
                                   })
                                 }
                               </td>
@@ -211,6 +212,39 @@ const IndexPage = () => (
                           )
                         })
                       }
+                    </tbody>
+                  </table>
+                  <table className="ui celled table">
+                    <thead>
+                      <tr>
+                        <th colSpan="2">Nearest Matching color</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <div className={`ui mini left floated ${styles.palette}`} style={{ backgroundColor: withDistanceInfo.distance[0].hex }}></div>
+                        </td>
+                        <td>
+                          <span><a href="withDistanceInfo.distance[0].hex">{withDistanceInfo.distance[0].hex}</a></span><br />
+                          <span>{(100 - withDistanceInfo.distance[0].distance).toFixed(2)}% similarity</span><br />
+                          <span>Used {deduplicated.find((otherColour) => otherColour.hex === colour.hex).useCount} time{deduplicated.find((otherColour) => otherColour.hex === colour.hex).useCount > 1 ? 's' : ''}</span><br />
+                          {/* {
+                            colour.distance.map(value => {
+                              return (
+                                <code>{value}</code>
+                              </td>
+                              <td>
+                            {
+                              expanded.filter(({ raw }) => raw === value).map(({ useCount }) => {
+                                return <span>Declared {useCount} time{useCount > 1 ? 's' : ''}</span>
+                              })
+                            }
+                            )
+                          })
+                        } */}
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
                   <table className="ui celled table">
