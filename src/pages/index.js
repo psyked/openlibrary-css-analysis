@@ -130,10 +130,10 @@ const IndexPage = () => (
                 <td>CSS Spec Keyword Colors:</td>
                 <td>{deduplicated.filter(({ keyword }) => !!keyword).length}</td>
               </tr>
-              <tr>
+              {/* <tr>
                 <td>Web Safe Colors:</td>
                 <td>coming soon</td>
-              </tr>
+              </tr> */}
             </tbody>
           </table>
         </Card.Description>
