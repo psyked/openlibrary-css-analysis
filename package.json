@@ -6,7 +6,7 @@
   "dependencies": {
     "css-color-extractor": "^0.0.5",
     "delta-e": "^0.0.7",
-    "gatsby": "^1.9.247",
+    "gatsby": "^1.9.271",
     "gatsby-link": "^1.6.40",
     "gatsby-plugin-react-helmet": "^2.0.10",
     "gh-pages": "^1.2.0",

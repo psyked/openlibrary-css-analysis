@@ -9,6 +9,7 @@ import removeDuplicates from '../libs/removeDuplicatesFromArrayByKey'
 
 // CSS
 import "semantic-ui-css/semantic.css";
+import './styles.css'
 import styles from './styles.module.css'
 
 // Raw data
