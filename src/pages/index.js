@@ -18,20 +18,48 @@ import exampleData from 'raw!../master.source'
 // extract color declarations from a full stylesheet
 const extractedColours = extractor.fromCss(exampleData);
 
+console.log(extractedColours)
+
 // expand the input colours into their other-format equivalents
 const expanded = extractedColours
   // replace with the full details
   .map(declaration => {
+    const r = new RegExp(declaration.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&') + '[\s|;|!]', 'g')
+    const matches = exampleData.match(r);
+    // console.log('regex?', r)
+    // console.log('exampleData', exampleData.match(r).length)
     return {
       ...parse(declaration), // use all of the values from 'parse-color'
       lab: rgb2lab(parse(declaration).rgb), // lab values are needed for Delta-E analysis
-      raw: [declaration] // so we know how it's been referenced in the source code
+      raw: declaration, // so we know how it's been referenced in the source code,
+      useCount: matches ? matches.length : 0
     }
   })
   // remove any invalid values that couldn't be parsed into hex values
   .filter(({ hex }) => !!hex)
 
-const deduplicated = removeDuplicates(expanded, 'hex');
+const expandedRefs = expanded.map(colorInfo => {
+  console.log(expanded.filter(({ hex }) => hex === colorInfo.hex))
+  return {
+    ...colorInfo,
+    useCount: expanded.filter(({ hex }) => hex === colorInfo.hex).map(({ useCount }) => useCount).reduce((prev, curr) => prev + curr),
+    raw: expanded.filter(({ hex }) => hex === colorInfo.hex).map(({ raw }) => raw)
+  }
+}).sort((a, b) => {
+  return b.useCount - a.useCount
+})
+
+// const expandedWithUseCount
+
+const deduplicated = removeDuplicates(expandedRefs, 'hex');
+// const deduplicated = expanded.filter((obj, pos, arr) => {
+//   const rtn = arr.map(mapObj => mapObj.hex).indexOf(obj.hex) === pos;
+//   if (rtn) {
+//     obj.raw = obj.raw.concat(arr[pos].raw)
+//     console.log(obj.raw)
+//   }
+//   return rtn;
+// });
 
 const groupedPalette = deduplicated.map((color) => {
   return {
@@ -153,20 +181,36 @@ const IndexPage = () => (
               <Card.Content>
                 <div className={`ui mini right floated ${styles.palette}`} style={{ backgroundColor: colour.hex }}></div>
                 <Card.Header><a name={colour.hex.replace('#', '')}></a>{colour.hex}</Card.Header>
-                <Card.Meta>{colour.keyword}</Card.Meta>
+                <Card.Meta>Declared {colour.useCount} time{colour.useCount > 1 ? 's' : ''} in CSS</Card.Meta>
               </Card.Content>
               <Card.Content extra>
                 <Card.Description>
                   <table className="ui celled table">
                     <thead>
                       <tr>
-                        <th>Existing color declarations</th>
+                        <th colSpan="2">Existing color declarations</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td><code>{String(colour.raw)}</code></td>
-                      </tr>
+                      {/* <td><code>{String(colour.raw)}</code></td> */}
+                      {
+                        colour.raw.map(value => {
+                          return (
+                            <tr>
+                              <td>
+                                <code>{value}</code>
+                              </td>
+                              <td>
+                                {
+                                  expanded.filter(({ raw }) => raw === value).map(({ useCount }) => {
+                                    return <span>Declared {useCount} time{useCount > 1 ? 's' : ''}</span>
+                                  })
+                                }
+                              </td>
+                            </tr>
+                          )
+                        })
+                      }
                     </tbody>
                   </table>
                   <table className="ui celled table">
