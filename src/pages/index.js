@@ -4,6 +4,9 @@ import { Card, Segment } from 'semantic-ui-react'
 import extractor from 'css-color-extractor'
 import parse from 'parse-color'
 import DeltaE from 'delta-e'
+// import brace from 'brace'
+import AceEditor, { diff as DiffEditor } from 'react-ace'
+// import DiffEditor from '../../../node_modules/react-ace/src/diff'
 import rgb2lab from '../libs/rgb2lab'
 import removeDuplicates from '../libs/removeDuplicatesFromArrayByKey'
 
@@ -11,6 +14,9 @@ import removeDuplicates from '../libs/removeDuplicatesFromArrayByKey'
 import "semantic-ui-css/semantic.css";
 import './styles.css'
 import styles from './styles.module.css'
+
+import 'brace/mode/css'
+import 'brace/theme/monokai'
 
 // Raw data
 import exampleData from 'raw!../master.source'
@@ -104,6 +110,10 @@ const deduplicatedgroups = removeDuplicates(groups.map((group) => {
   }
   return b.length - a.length
 })
+
+function onChange(newValue) {
+  console.log('change', newValue);
+}
 
 const IndexPage = () => (
   <div>
@@ -274,7 +284,20 @@ const IndexPage = () => (
       }
     </Card.Group>
     <h2 id="source-data">Source data</h2>
-    <pre><code>{exampleData}</code></pre>
+    {/* <DiffEditor
+      mode="css"
+      width="930px"
+      splits="2"
+      value={[String(exampleData), String(exampleData)]}
+    /> */}
+    <AceEditor
+      mode="css"
+      width="930px"
+      theme="monokai"
+      // splits="2"
+      wrapEnabled={true}
+      value={String(exampleData)}
+    />
   </div >
 )
 

@@ -11,6 +11,7 @@
     "gatsby-plugin-react-helmet": "^2.0.10",
     "gh-pages": "^1.2.0",
     "parse-color": "^1.0.0",
+    "react-ace": "^6.1.1",
     "react-helmet": "^5.2.0",
     "semantic-ui-css": "^2.3.1",
     "semantic-ui-react": "^0.81.1"
