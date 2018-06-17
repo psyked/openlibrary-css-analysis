@@ -226,7 +226,7 @@ const IndexPage = () => (
                           <div className={`ui mini left floated ${styles.palette}`} style={{ backgroundColor: withDistanceInfo.distance[0].hex }}></div>
                         </td>
                         <td>
-                          <span><a href="withDistanceInfo.distance[0].hex">{withDistanceInfo.distance[0].hex}</a></span><br />
+                          <span><a href={withDistanceInfo.distance[0].hex}>{withDistanceInfo.distance[0].hex}</a></span><br />
                           <span>{(100 - withDistanceInfo.distance[0].distance).toFixed(2)}% similarity</span><br />
                           <span>Used {deduplicated.find((otherColour) => otherColour.hex === withDistanceInfo.distance[0].hex).useCount} time{deduplicated.find((otherColour) => otherColour.hex === withDistanceInfo.distance[0].hex).useCount > 1 ? 's' : ''}</span><br />
                           {/* {
