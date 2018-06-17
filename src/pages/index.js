@@ -1,6 +1,6 @@
 // JS
 import React from 'react'
-import { Card, Segment, Tab } from 'semantic-ui-react'
+import { Card, Segment, Tab, Popup } from 'semantic-ui-react'
 import extractor from 'css-color-extractor'
 import parse from 'parse-color'
 import DeltaE from 'delta-e'
@@ -149,9 +149,14 @@ const panes = [
                 <div className={styles.palettecontainer}>
                   {group.map((colour) => {
                     return (
-                      <div key={colour.hex} className={`ui ${styles.palette} ${colour.hsl[2] > 50 ? styles.palette_dark : styles.palette_light}`} style={{ backgroundColor: colour.hex }}>
-                        {colour.hex.toUpperCase()}
-                      </div>
+                      <Popup
+                        trigger={<div key={colour.hex} className={`ui ${styles.palette} ${colour.hsl[2] > 50 ? styles.palette_dark : styles.palette_light}`} style={{ backgroundColor: colour.hex }}>
+                          {colour.hex.toUpperCase()}
+                        </div>}
+                        content={`Used ${colour.useCount} time${colour.useCount > 1 ? 's' : ''}`}
+                        position='top center'
+                        inverted
+                      />
                     )
                   })}
                 </div>
