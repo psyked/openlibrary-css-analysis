@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "author": "Kyle Mathews <mathews.kyle@gmail.com>",
   "dependencies": {
+    "axios": "^0.18.0",
     "css-color-extractor": "^0.0.5",
     "delta-e": "^0.0.7",
     "gatsby": "^1.9.271",
