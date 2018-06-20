@@ -160,15 +160,16 @@ class IndexPage extends React.Component {
   // }
 
   handleChange(event) {
+
     this.setState({
       sourceurl: event.target.value
     })
 
-    axios.get(event.target.value, { headers: { 'Content-Type': 'text/plain' } })
+    axios.get(`https://cors-anywhere.herokuapp.com/${event.target.value}`)
       .then(res => {
-        // console.log('loaded')
+        console.log('loaded')
         // const persons = res.data;
-        // console.log(res.data);
+        console.log(res.data);
         this.setState({
           ...parseData(res.data)
         });
